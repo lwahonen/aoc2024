@@ -1,4 +1,5 @@
 import {fetchInputData, overlappedMatches} from "./libraries.js";
+import {regex} from 'regex';
 
 const year = 2024
 const day = 3;
@@ -19,9 +20,6 @@ if (isNode) {
 // START HERE
 ///////////////////////////////////////////////////
 
-
-let input = file.trim();
-
 function countString(into) {
     let part1 = 0
     let b = overlappedMatches(into, /mul\((\d+),(\d+)\)/)
@@ -33,11 +31,11 @@ function countString(into) {
     return part1;
 }
 
-console.log("Part 1 " + countString(input))
+console.log("Part 1 " + countString(file))
 
 let part2 = 0;
 
-let subs=input.split(/don't\(\)/)
+let subs=file.split(/don't\(\)/)
 // Count until don't activated
 part2+=countString(subs[0])
 for (let i = 1; i < subs.length; i++) {
@@ -49,4 +47,8 @@ for (let i = 1; i < subs.length; i++) {
         part2 += countString(sub);
     }
 }
-console.log("Part 2 " + part2)
+console.log("Unga bunga part 2 " + part2)
+
+let dis=file.replaceAll("\n", " ").replaceAll(/don't\(\).*?(do\(\)|$)/g, " ")
+let test         = countString(dis);
+console.log("Replaceall part 2 " + test)
