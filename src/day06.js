@@ -97,6 +97,11 @@ for (let r = 0; r < input.length; r++) {
     for (let c = 0; c < input[r].length; c++) {
         if(input[r][c] == "#")
             continue
+        // Use answer from part 1 as oracle
+        // we can just skip every tile that the guard did not visit on the original loop
+        if(!visited.hasOwnProperty(`${r},${c}`))
+            continue
+
         here=JSON.parse(JSON.stringify(newStart))
         blockedRow = r
         blockedColumn = c
