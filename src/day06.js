@@ -75,6 +75,8 @@ while (true) {
     here = nextStep
 }
 
+console.log("Part 1 " + Object.keys(visited).length)
+
 function halts()
 {
     let visited={}
@@ -93,7 +95,6 @@ function halts()
 let score2 = 0
 
 for (let r = 0; r < input.length; r++) {
-    console.log("Row "+r)
     for (let c = 0; c < input[r].length; c++) {
         if(input[r][c] == "#")
             continue
@@ -110,5 +111,4 @@ for (let r = 0; r < input.length; r++) {
     }
 }
 
-console.log("Part 1 " + Object.keys(visited).length)
 console.log("Part 2 " + score2)
