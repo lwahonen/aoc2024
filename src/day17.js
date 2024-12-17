@@ -21,23 +21,20 @@ if (isNode) {
 // START HERE
 ///////////////////////////////////////////////////
 
-let a = BigInt(file.trim().split("\n")[0].split(": ")[1])
-let b = BigInt(file.trim().split("\n")[1].split(": ")[1])
-let c = BigInt(file.trim().split("\n")[2].split(": ")[1])
+let aInput = BigInt(file.trim().split("\n")[0].split(": ")[1])
+let bInput = BigInt(file.trim().split("\n")[1].split(": ")[1])
+let cInput = BigInt(file.trim().split("\n")[2].split(": ")[1])
 let program = file.trim().split("Program: ")[1].split(",").map(b => parseInt(b))
 
-function getCombo(op) {
+function getCombo(op, a, b, c) {
     switch (op) {
         case 0:
-            return 0n;
         case 1:
-            return 1n;
         case 2:
-            return 2n;
         case 3:
-            return 3n;
+            return BigInt(op);
         case 4:
-            return a;
+            return aInput;
         case 5:
             return b;
         case 6:
@@ -48,64 +45,64 @@ function getCombo(op) {
 }
 
 function div(a, b) {
-    let den=2n ** b
-    let res=a/ den
+    let den = 2n ** b
+    let res = a / den
     return res
 }
 
 function runMachine() {
     let ip = 0
     let p1 = []
+    let a=aInput
+    let b=bInput
+    let c=cInput
     while (ip < program.length) {
         let instr = program[ip]
-        let literal = BigInt(program[ip + 1]);
-        let combo = getCombo(program[ip + 1]);
+        let literal = program[ip + 1];
+        let combo = getCombo(literal, a, b, c);
         if (instr == 0) {
-            a = div(a,combo)
+            aInput = div(aInput, combo)
         }
         if (instr == 1) {
-            b = literal ^ b
+            b = BigInt(literal) ^ b
         }
         if (instr == 2) {
             b = combo & 7n
         }
-        if (instr == 3 && a != 0) {
-            ip = program[ip + 1]
+        if (instr == 3 && aInput != 0) {
+            ip = literal
             continue
         }
         if (instr == 4) {
             b = c ^ b
         }
         if (instr == 5) {
-            p1.push(combo & 7n)
+            p1.push(Number(combo & 7n))
         }
         if (instr == 6) {
-            b = div(a,combo)
+            b = div(aInput, combo)
         }
         if (instr == 7) {
-            c = div(a,combo)
+            c = div(aInput, combo)
         }
         ip += 2
     }
     return p1
 }
-BigInt.prototype.toJSON = function() { return this.toString() }
-console.log("Part 1 "+JSON.stringify(runMachine()).replaceAll("\"", ""))
 
-function compareTails(a,b, len) {
-    let s = b.slice(b.length-len)
-    if (s.length != a.length)
-        return false
+console.log("Part 1 " + JSON.stringify(runMachine()))
+
+function compareTails(a, b, len) {
+    let s = b.slice(b.length - len)
     for (let i = 0; i < s.length; i++) {
-        if (BigInt(s[i]) != a[i])
+        if (s[i] != a[i]) {
             return false
+        }
     }
     return true
 }
 
-let bTemp= b
-let cTemp= c
-console.log("Starting the hunt for "+JSON.stringify(program)+". Pay attention to last digits")
+console.log("Starting the hunt for " + JSON.stringify(program) + ". Pay attention to last digits")
 
 // Every number in the program is represented by three bits in our answer
 // First find the number 1..8 that gives us the correct last number
@@ -119,23 +116,22 @@ function findNextDigit(currentDigit, solvedDigits) {
     let foundDigits = solvedDigits * 8n;
     for (let i = 0n; i < 8n; i++) {
         let candidate = foundDigits + i;
-        a = candidate
-        b = bTemp
-        c = cTemp
+        aInput = candidate
         let result = runMachine()
         if (compareTails(result, program, currentDigit)) {
             // Printing in octal to show the patter of candidate vs resulting program. The first digits of the base 8
             // Stay the same == the last digits of the program stay the same
-            console.log("Found tail length " + currentDigit + " for " + JSON.stringify(result) + " octal " + candidate.toString(8) +" in decimal "+candidate)
+            console.log("Found tail length " + currentDigit + " for " + JSON.stringify(result) + " octal " + candidate.toString(8) + " in decimal " + candidate)
             if (currentDigit == program.length) {
                 return candidate
             }
             let ret = findNextDigit(currentDigit + 1, candidate)
-            if (ret != -1)
+            if (ret != -1) {
                 return ret
+            }
         }
     }
     return -1
 }
 
-console.log("Part 2 "+findNextDigit(1, 0n))
+console.log("Part 2 " + findNextDigit(1, 0n))
