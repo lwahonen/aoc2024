@@ -34,7 +34,7 @@ function getCombo(op, a, b, c) {
         case 3:
             return BigInt(op);
         case 4:
-            return aInput;
+            return a;
         case 5:
             return b;
         case 6:
@@ -50,10 +50,10 @@ function div(a, b) {
     return res
 }
 
-function runMachine() {
+function runMachine(candidate) {
     let ip = 0
     let p1 = []
-    let a=aInput
+    let a=candidate
     let b=bInput
     let c=cInput
     while (ip < program.length) {
@@ -61,7 +61,7 @@ function runMachine() {
         let literal = program[ip + 1];
         let combo = getCombo(literal, a, b, c);
         if (instr == 0) {
-            aInput = div(aInput, combo)
+            a = div(a, combo)
         }
         if (instr == 1) {
             b = BigInt(literal) ^ b
@@ -69,7 +69,7 @@ function runMachine() {
         if (instr == 2) {
             b = combo & 7n
         }
-        if (instr == 3 && aInput != 0) {
+        if (instr == 3 && a != 0) {
             ip = literal
             continue
         }
@@ -80,17 +80,17 @@ function runMachine() {
             p1.push(Number(combo & 7n))
         }
         if (instr == 6) {
-            b = div(aInput, combo)
+            b = div(a, combo)
         }
         if (instr == 7) {
-            c = div(aInput, combo)
+            c = div(a, combo)
         }
         ip += 2
     }
     return p1
 }
 
-console.log("Part 1 " + JSON.stringify(runMachine()))
+console.log("Part 1 " + JSON.stringify(runMachine(aInput)))
 
 function compareTails(a, b, len) {
     let s = b.slice(b.length - len)
@@ -116,8 +116,7 @@ function findNextDigit(currentDigit, solvedDigits) {
     let foundDigits = solvedDigits * 8n;
     for (let i = 0n; i < 8n; i++) {
         let candidate = foundDigits + i;
-        aInput = candidate
-        let result = runMachine()
+        let result = runMachine(candidate)
         if (compareTails(result, program, currentDigit)) {
             // Printing in octal to show the patter of candidate vs resulting program. The first digits of the base 8
             // Stay the same == the last digits of the program stay the same
