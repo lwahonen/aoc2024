@@ -30,7 +30,7 @@ let cache = {}
 
 function possible(design) {
     if (design.length == 0)
-        return true
+        return 1
     if (cache[design] !== undefined)
         return cache[design]
     let options = 0
