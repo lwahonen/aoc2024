@@ -115,6 +115,11 @@ export function permutations(matrix) {
     return ret
 }
 
+export function filterObject(obj, callback) {
+    return Object.fromEntries(Object.entries(obj).
+    filter(([key, val]) => callback(val, key)));
+}
+
 export function overlappedMatches(original, reg) {
     var inbraces = [], found;
     let s = original
